@@ -1,0 +1,38 @@
+name: Auto Unzip Resources
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Unzip baileys.zip
+        run: |
+          if [ -f baileys.zip ]; then
+            echo "baileys.zip ditemukan"
+
+            rm -rf baileys 
+            unzip -o baileys.zip -d .
+
+            rm baileys.zip
+
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            git add .
+            git commit -m "Auto extract baileys.zip" || echo "Tidak ada perubahan"
+
+            git push
+          else
+            echo "baileys.zip tidak ditemukan"
+          fi
